@@ -1,0 +1,673 @@
+<div class="pokedex-container">
+  
+  <!-- ============================================ -->
+  <!-- 🎮 HEADER CON NAVEGACIÓN                     -->
+  <!-- ============================================ -->
+  <header class="pokedex-header">
+    <div class="header-glow"></div>
+    
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="pokeball-icon">
+          <div class="pokeball-button"></div>
+        </div>
+        <h1 class="main-title">
+          <span class="title-poke">Poké</span><span class="title-dex">Dex</span>
+          <span class="title-version">Competitiva</span>
+        </h1>
+      </div>
+
+      <!-- ⭐ NAVEGACIÓN POR TABS CON ICONOS DE FLATICON -->
+      <nav class="tab-navigation">
+        <button 
+          class="tab-btn"
+          [class.active]="activeTab() === 'catalog'"
+          (click)="setActiveTab('catalog')">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/1280px-Pok%C3%A9_Ball_icon.svg.png" 
+            alt="Catálogo"
+            class="tab-icon-img"
+          />
+          <span class="tab-label">Catálogo</span>
+        </button>
+        
+        <button 
+          class="tab-btn"
+          [class.active]="activeTab() === 'team'"
+          (click)="setActiveTab('team')">
+          <img 
+            src="https://static.wikia.nocookie.net/pokemongo/images/f/f4/Team_Mystic.png/revision/latest?cb=20160717150716" 
+            alt="Mi Equipo"
+            class="tab-icon-img"
+          />
+          <span class="tab-label">Mi Equipo</span>
+          @if (myTeam().length > 0) {
+            <span class="tab-badge">{{ myTeam().length }}</span>
+          }
+        </button>
+        
+        <button 
+          class="tab-btn"
+          [class.active]="activeTab() === 'stats'"
+          (click)="setActiveTab('stats')"
+          [disabled]="myTeam().length === 0">
+          <img 
+            src="https://cdn-icons-png.freepik.com/512/272/272369.png" 
+            alt="Análisis"
+            class="tab-icon-img"
+          />
+          <span class="tab-label">Análisis</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================ -->
+  <!-- 📚 TAB 1: CATÁLOGO DE POKÉMON                -->
+  <!-- ============================================ -->
+  @if (activeTab() === 'catalog') {
+    <main class="catalog-view">
+      <!-- Buscador -->
+      <div class="search-container-inline">
+        <div class="search-wrapper">
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/622/622669.png" 
+            alt="Buscar"
+            class="search-icon-img"
+          />
+          <input
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Buscar Pokémon (ej. pika, char, bulba...)"
+            class="search-input"
+            (keyup.enter)="onSearch()"
+          />
+          <button class="search-btn" (click)="onSearch()">
+            <span>Buscar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Catálogo -->
+      <div class="catalog-section">
+        <div class="catalog-header">
+          <h2>
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/2821/2821921.png" 
+              alt="Catálogo"
+              class="catalog-icon-img"
+            />
+            Pokédex Nacional
+          </h2>
+          <div class="catalog-info">
+            <span class="results-count">{{ filteredNames().length }} resultados</span>
+          </div>
+        </div>
+
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="pokeball-loader">
+              <div class="pokeball-loader-inner"></div>
+            </div>
+            <p>Cargando Pokémon...</p>
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="error-state">
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/5683/5683534.png" 
+              alt="Error"
+              class="error-icon-img"
+            />
+            <p>{{ errorMessage() }}</p>
+          </div>
+        }
+
+        @if (pokemonGrid().length > 0) {
+          <div class="pokemon-grid">
+            @for (poke of pokemonGrid(); track poke.id) {
+              <app-pokemon-card
+                [pokemon]="poke"
+                (addClick)="addToMyTeam($event)"
+                (infoClick)="openDetails($event); pokemonModal.showModal()"
+              ></app-pokemon-card>
+            }
+          </div>
+
+          <!-- Paginación -->
+          <div class="pagination">
+            <button 
+              class="pagination-btn prev" 
+              (click)="changePage(-1)" 
+              [disabled]="currentPage() === 1 || isLoading()">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/271/271220.png" 
+                alt="Anterior"
+                class="pagination-icon-img"
+              />
+              <span class="btn-text">Anterior</span>
+            </button>
+
+            <div class="page-indicator">
+              <span class="current-page">{{ currentPage() }}</span>
+              <span class="page-separator">/</span>
+              <span class="total-pages">{{ totalPages() }}</span>
+            </div>
+
+            <button 
+              class="pagination-btn next" 
+              (click)="changePage(1)" 
+              [disabled]="currentPage() === totalPages() || isLoading()">
+              <span class="btn-text">Siguiente</span>
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/271/271228.png" 
+                alt="Siguiente"
+                class="pagination-icon-img"
+              />
+            </button>
+          </div>
+        }
+      </div>
+    </main>
+  }
+
+  <!-- ============================================ -->
+  <!-- ⚔️ TAB 2: MI EQUIPO                          -->
+  <!-- ============================================ -->
+  @if (activeTab() === 'team') {
+    <main class="team-view">
+      <section class="team-panel-full">
+        <div class="team-header">
+          <h2>
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/2553/2553642.png" 
+              alt="Equipo"
+              class="team-icon-img"
+            />
+            Mi Equipo Principal
+            <span class="team-counter">{{ myTeam().length }}/6</span>
+          </h2>
+          
+          @if (myTeam().length === 6) {
+            <div class="team-complete-badge">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/7656/7656139.png" 
+                alt="Completo"
+                class="badge-icon-img"
+              />
+              ¡Equipo Completo!
+            </div>
+          }
+        </div>
+
+        @if (myTeam().length === 0) {
+          <div class="empty-team-state">
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/5683/5683534.png" 
+              alt="Vacío"
+              class="empty-icon-img"
+            />
+            <p class="empty-title">Tu equipo está vacío</p>
+            <p class="empty-subtitle">Ve al catálogo y añade hasta 6 Pokémon para formar tu equipo competitivo</p>
+            <button class="cta-button" (click)="setActiveTab('catalog')">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/2821/2821921.png" 
+                alt="Catálogo"
+                class="cta-icon-img"
+              />
+              <span>Ir al Catálogo</span>
+            </button>
+          </div>
+        } @else {
+          <div class="team-grid-large">
+            @for (member of myTeam(); track member.id) {
+              <div class="team-card-detailed">
+                <button 
+                  class="remove-btn" 
+                  (click)="removeFromMyTeam(member.id)"
+                  title="Quitar de mi equipo">
+                  <span class="remove-icon">×</span>
+                </button>
+
+                <div class="team-card-image">
+                  <div class="avatar-glow"></div>
+                  <img 
+                    [src]="member.sprites.other?.['official-artwork']?.front_default || member.sprites.front_default" 
+                    [alt]="member.name" 
+                  />
+                </div>
+
+                <div class="team-card-info">
+                  <div class="team-card-header">
+                    <span class="team-card-name">{{ member.name | titlecase }}</span>
+                    <span class="team-card-id">#{{ member.id.toString().padStart(3, '0') }}</span>
+                  </div>
+
+                  <div class="team-card-types">
+                    @for (typeInfo of member.types; track typeInfo.type.name) {
+                      <span class="type-badge-small" [attr.data-type]="typeInfo.type.name">
+                        <img 
+                          [src]="getTypeIcon(typeInfo.type.name)" 
+                          [alt]="typeInfo.type.name" 
+                          class="type-icon-small-img"
+                        />
+                        {{ typeInfo.type.name }}
+                      </span>
+                    }
+                  </div>
+
+                  <div class="team-card-stats-mini">
+                    @for (stat of member.stats.slice(0, 3); track stat.stat.name; let i = $index) {
+                      <div class="stat-mini">
+                        <img 
+                          [src]="getStatIcon(i)" 
+                          [alt]="stat.stat.name"
+                          class="stat-mini-icon-img"
+                        />
+                        <span class="stat-mini-label">{{ getStatShortName(stat.stat.name) }}</span>
+                        <span class="stat-mini-value">{{ stat.base_stat }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <button 
+                    class="view-details-btn"
+                    (click)="openDetails(member); pokemonModal.showModal()">
+                    <img 
+                      src="https://cdn-icons-png.flaticon.com/512/5683/5683325.png" 
+                      alt="Detalles"
+                      class="view-details-icon-img"
+                    />
+                    Ver Detalles Completos
+                  </button>
+                </div>
+              </div>
+            }
+            
+            <!-- Slots vacíos -->
+            @for (slot of getEmptySlots(); track slot) {
+              <div class="team-card-empty">
+                <div class="empty-slot-content">
+                  <img 
+                    src="https://cdn-icons-png.flaticon.com/512/5735/5735394.png" 
+                    alt="Añadir"
+                    class="empty-slot-icon-img"
+                  />
+                  <span class="empty-slot-text">Slot Vacío</span>
+                  <button class="add-pokemon-btn" (click)="setActiveTab('catalog')">
+                    Añadir Pokémon
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </main>
+  }
+
+  <!-- ============================================ -->
+  <!-- 📊 TAB 3: ANÁLISIS DEL EQUIPO                -->
+  <!-- ============================================ -->
+  @if (activeTab() === 'stats') {
+    <main class="stats-view">
+      <section class="stats-panel">
+        <h2>
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/9187/9187604.png" 
+            alt="Análisis"
+            class="stats-icon-img"
+          />
+          Análisis del Equipo
+        </h2>
+
+        <!-- Métricas principales -->
+        <div class="stats-summary">
+          <div class="stat-card power">
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/10258/10258253.png" 
+              alt="Poder"
+              class="stat-card-icon-img"
+            />
+            <div class="stat-content">
+              <span class="stat-label">Poder Total</span>
+              <span class="stat-value">{{ totalPower() }}</span>
+            </div>
+          </div>
+
+          <div class="stat-card hp">
+            <img 
+              src="https://png.pngtree.com/png-clipart/20250103/original/pngtree-heart-icon-png-image_4421855.png" 
+              alt="HP"
+              class="stat-card-icon-img"
+            />
+            <div class="stat-content">
+              <span class="stat-label">HP Promedio</span>
+              <span class="stat-value">{{ averageHP() }}</span>
+            </div>
+          </div>
+
+          <div class="stat-card members">
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/681/681494.png" 
+              alt="Miembros"
+              class="stat-card-icon-img"
+            />
+            <div class="stat-content">
+              <span class="stat-label">Miembros</span>
+              <span class="stat-value">{{ myTeam().length }}/6</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barras de estadísticas -->
+        <div class="stats-bars">
+          <h3>Estadísticas Combinadas</h3>
+          
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://png.pngtree.com/png-clipart/20250103/original/pngtree-heart-icon-png-image_4421855.png" 
+                alt="HP"
+                class="stat-bar-icon-img"
+              />
+              HP
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill hp-bar" 
+                [style.width.%]="(totalHP() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalHP() }}</span>
+          </div>
+
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/1298/1298514.png" 
+                alt="ATK"
+                class="stat-bar-icon-img"
+              />
+              ATK
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill attack-bar" 
+                [style.width.%]="(totalAttack() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalAttack() }}</span>
+          </div>
+
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/306/306771.png" 
+                alt="DEF"
+                class="stat-bar-icon-img"
+              />
+              DEF
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill defense-bar" 
+                [style.width.%]="(totalDefense() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalDefense() }}</span>
+          </div>
+
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/8989/8989486.png" 
+                alt="SP.ATK"
+                class="stat-bar-icon-img"
+              />
+              SP.ATK
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill sp-attack-bar" 
+                [style.width.%]="(totalSpecialAttack() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalSpecialAttack() }}</span>
+          </div>
+
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/512/929/929430.png" 
+                alt="SP.DEF"
+                class="stat-bar-icon-img"
+              />
+              SP.DEF
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill sp-defense-bar" 
+                [style.width.%]="(totalSpecialDefense() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalSpecialDefense() }}</span>
+          </div>
+
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">
+              <img 
+                src="https://cdn-icons-png.flaticon.com/256/1455/1455318.png" 
+                alt="SPEED"
+                class="stat-bar-icon-img"
+              />
+              SPEED
+            </span>
+            <div class="stat-bar-track">
+              <div 
+                class="stat-bar-fill speed-bar" 
+                [style.width.%]="(totalSpeed() / maxStatValue()) * 100">
+                <span class="bar-shine"></span>
+              </div>
+            </div>
+            <span class="stat-bar-value">{{ totalSpeed() }}</span>
+          </div>
+        </div>
+
+        <!-- Destacados -->
+        <div class="team-highlights">
+          <h3>
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/7656/7656139.png" 
+              alt="Destacados"
+              class="highlights-title-icon-img"
+            />
+            Destacados del Equipo
+          </h3>
+          
+          <div class="highlights-grid">
+            @if (strongestPokemon(); as strongest) {
+              <div class="highlight-card strongest">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/10258/10258253.png" 
+                  alt="Más Fuerte"
+                  class="highlight-icon-img"
+                />
+                <div class="highlight-content">
+                  <span class="highlight-label">Más Fuerte</span>
+                  <span class="highlight-name">{{ strongest.name | titlecase }}</span>
+                  <span class="highlight-stat">
+                    {{ strongest.stats.reduce((sum, s) => sum + s.base_stat, 0) }} pts
+                  </span>
+                </div>
+              </div>
+            }
+
+            @if (fastestPokemon(); as fastest) {
+              <div class="highlight-card fastest">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/256/1455/1455318.png" 
+                  alt="Más Rápido"
+                  class="highlight-icon-img"
+                />
+                <div class="highlight-content">
+                  <span class="highlight-label">Más Rápido</span>
+                  <span class="highlight-name">{{ fastest.name | titlecase }}</span>
+                  <span class="highlight-stat">{{ fastest.stats[5].base_stat }} Speed</span>
+                </div>
+              </div>
+            }
+
+            @if (tankiestPokemon(); as tankiest) {
+              <div class="highlight-card tankiest">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/306/306771.png" 
+                  alt="Más Resistente"
+                  class="highlight-icon-img"
+                />
+                <div class="highlight-content">
+                  <span class="highlight-label">Más Resistente</span>
+                  <span class="highlight-name">{{ tankiest.name | titlecase }}</span>
+                  <span class="highlight-stat">{{ tankiest.stats[0].base_stat }} HP</span>
+                </div>
+              </div>
+            }
+
+            @if (strongestAttacker(); as attacker) {
+              <div class="highlight-card attacker">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/1298/1298514.png" 
+                  alt="Mejor Atacante"
+                  class="highlight-icon-img"
+                />
+                <div class="highlight-content">
+                  <span class="highlight-label">Mejor Atacante</span>
+                  <span class="highlight-name">{{ attacker.name | titlecase }}</span>
+                  <span class="highlight-stat">{{ attacker.stats[1].base_stat }} ATK</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    </main>
+  }
+<dialog #pokemonModal class="pokemon-modal">
+  @if (selectedPokemonInfo(); as detail) {
+    <div class="modal-backdrop-overlay" (click)="pokemonModal.close(); closeDetails()"></div>
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Botón cerrar -->
+      <button class="modal-close" (click)="pokemonModal.close(); closeDetails()">
+        <span>×</span>
+      </button>
+
+      <!-- Header compacto -->
+      <div class="modal-header">
+        <div class="modal-id">#{{ detail.id.toString().padStart(3, '0') }}</div>
+        <h2 class="modal-title">{{ detail.name | titlecase }}</h2>
+        
+        <!-- Tipos CON COLORES -->
+        <div class="modal-types">
+          @for (typeInfo of detail.types; track typeInfo.type.name) {
+            <span class="type-badge-modal" [attr.data-type]="typeInfo.type.name">
+              {{ typeInfo.type.name }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Body: Layout en 2 columnas (Imagen | Info) -->
+      <div class="modal-body-compact">
+        
+        <!-- Columna izquierda: Imagen -->
+        <div class="modal-image-section">
+          <div class="modal-image-glow"></div>
+          <img
+            [src]="detail.sprites.other?.['official-artwork']?.front_default || detail.sprites.front_default"
+            [alt]="detail.name"
+            class="modal-image"
+          />
+        </div>
+
+        <!-- Columna derecha: Info física + Stats -->
+        <div class="modal-info-section">
+          
+          <!-- Info física (altura y peso en fila) -->
+          <div class="modal-physical-compact">
+            <div class="physical-stat-compact">
+              <img src="https://cdn-icons-png.flaticon.com/512/764/764626.png" alt="Altura" class="physical-icon-compact-img">
+              <div class="physical-content-compact">
+                <span class="physical-label-compact">Altura</span>
+                <span class="physical-value-compact">{{ detail.height / 10 }} m</span>
+              </div>
+            </div>
+            <div class="physical-stat-compact">
+              <img src="https://cdn-icons-png.flaticon.com/512/110/110650.png" alt="Peso" class="physical-icon-compact-img">
+              <div class="physical-content-compact">
+                <span class="physical-label-compact">Peso</span>
+                <span class="physical-value-compact">{{ detail.weight / 10 }} kg</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estadísticas base (versión compacta) -->
+          <div class="modal-stats-compact">
+            <h3>Estadísticas Base</h3>
+            <div class="stats-grid-compact">
+              @for (stat of detail.stats; track stat.stat.name) {
+                <div class="modal-stat-row-compact">
+                  <span class="modal-stat-name-compact">
+                    {{ getStatShortName(stat.stat.name) }}
+                  </span>
+                  <div class="modal-stat-bar-container-compact">
+                    <div 
+                      class="modal-stat-bar-compact" 
+                      [style.width.%]="(stat.base_stat / 255) * 100"
+                      [attr.data-stat]="stat.stat.name">
+                    </div>
+                  </div>
+                  <span class="modal-stat-value-compact">{{ stat.base_stat }}</span>
+                </div>
+              }
+            </div>
+            <!-- Total compacto -->
+            <div class="total-stats-compact">
+              <span class="total-label-compact">Total</span>
+              <span class="total-value-compact">
+                {{ detail.stats.reduce((sum, s) => sum + s.base_stat, 0) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</dialog>
+
+  <!-- ============================================ -->
+  <!-- 🔔 SISTEMA DE NOTIFICACIONES TOAST          -->
+  <!-- ============================================ -->
+@if (toastVisible()) {
+    <div class="toast" [attr.data-type]="toastType()">
+      <div class="toast-icon">
+        @if (toastType() === 'success') { 
+          <img src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Success" class="toast-icon-img"> 
+        }
+        @if (toastType() === 'warning') { 
+          <img src="https://cdn-icons-png.flaticon.com/512/5683/5683534.png" alt="Warning" class="toast-icon-img"> 
+        }
+        @if (toastType() === 'error') { 
+          <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png" alt="Error" class="toast-icon-img"> 
+        }
+      </div>
+      <div class="toast-message">{{ toastMessage() }}</div>
+      <button class="toast-close" (click)="toastVisible.set(false)">×</button>
+    </div>
+  }
+</div>

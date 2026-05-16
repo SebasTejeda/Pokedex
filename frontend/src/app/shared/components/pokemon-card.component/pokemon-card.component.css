@@ -1,0 +1,594 @@
+/* ================================================ */
+/* 🎴 POKEMON CARD - DISEÑO HOLOGRÁFICO PREMIUM   */
+/* ================================================ */
+
+.pokemon-card-wrapper {
+  perspective: 1000px;
+  height: 100%;
+}
+
+.pokemon-card {
+  position: relative;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.pokemon-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 
+    0 20px 40px rgba(59, 130, 246, 0.4),
+    0 0 20px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Efecto holográfico animado */
+.holographic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(96, 165, 250, 0.1) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pokemon-card:hover .holographic-overlay {
+  opacity: 1;
+  animation: holographic-sweep 3s ease-in-out infinite;
+}
+
+@keyframes holographic-sweep {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
+/* Variante Shiny (dorado) */
+.pokemon-card.shiny {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  animation: shiny-pulse 2s ease-in-out infinite;
+}
+
+@keyframes shiny-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.8); }
+}
+
+/* Badge de ID */
+.pokemon-id-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  color: #94a3b8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  z-index: 2;
+}
+
+/* Contenedor del sprite */
+.sprite-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 180px;
+  z-index: 2;
+}
+
+.sprite-glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.sprite {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.pokemon-card:hover .sprite {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Información del Pokémon */
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 2;
+}
+
+.pokemon-name {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: capitalize;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+}
+
+/* Tipos rediseñados */
+.types {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.type-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.type-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.type-icon {
+  font-size: 1rem;
+}
+
+/* Colores por tipo */
+/* .type-badge[data-type="fire"] { background: linear-gradient(135deg, #f59e0b, #dc2626); color: white; }
+.type-badge[data-type="water"] { background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; }
+.type-badge[data-type="grass"] { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+.type-badge[data-type="electric"] { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.type-badge[data-type="ice"] { background: linear-gradient(135deg, #67e8f9, #06b6d4); color: #1e293b; }
+.type-badge[data-type="fighting"] { background: linear-gradient(135deg, #b91c1c, #7f1d1d); color: white; }
+.type-badge[data-type="poison"] { background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; }
+.type-badge[data-type="ground"] { background: linear-gradient(135deg, #d97706, #92400e); color: white; }
+.type-badge[data-type="flying"] { background: linear-gradient(135deg, #a5b4fc, #6366f1); color: white; }
+.type-badge[data-type="psychic"] { background: linear-gradient(135deg, #ec4899, #be185d); color: white; }
+.type-badge[data-type="bug"] { background: linear-gradient(135deg, #84cc16, #65a30d); color: white; }
+.type-badge[data-type="rock"] { background: linear-gradient(135deg, #78716c, #57534e); color: white; }
+.type-badge[data-type="ghost"] { background: linear-gradient(135deg, #6366f1, #4338ca); color: white; }
+.type-badge[data-type="dragon"] { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+.type-badge[data-type="dark"] { background: linear-gradient(135deg, #1f2937, #111827); color: white; }
+.type-badge[data-type="steel"] { background: linear-gradient(135deg, #94a3b8, #64748b); color: white; }
+.type-badge[data-type="fairy"] { background: linear-gradient(135deg, #f9a8d4, #ec4899); color: white; }
+.type-badge[data-type="normal"] { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; } */
+
+.type-badge {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  color: #f8fafc;
+}
+
+/* Mini Stats Preview */
+.mini-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.mini-stat-icon {
+  font-size: 1.2rem;
+}
+
+.mini-stat-value {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Botones de acción rediseñados */
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+  z-index: 2;
+}
+
+.action-buttons button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.action-buttons button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-icon,
+.btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-add:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-info:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+/* Indicador de rareza */
+.rarity-indicator {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 3;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+.rarity-indicator.legendary {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1e293b;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pokemon-card {
+    padding: 1rem;
+  }
+
+  .sprite-container {
+    height: 140px;
+  }
+
+  .sprite {
+    width: 110px;
+    height: 110px;
+  }
+
+  .pokemon-name {
+    font-size: 1.2rem;
+  }
+}
+
+/* ================================================ */
+/* 🎴 POKEMON CARD - DISEÑO COMPACTO HORIZONTAL    */
+/* ================================================ */
+
+.pokemon-card-compact {
+  position: relative;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 16px;
+  padding: 1rem;
+  overflow: hidden;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  
+  /* ⭐ CLAVE: Altura fija para evitar sobreposición */
+  height: 240px; /* ← Altura fija */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pokemon-card-compact:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 
+    0 12px 24px rgba(59, 130, 246, 0.4),
+    0 0 20px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 10; /* ← Para que se vea encima al hacer hover */
+}
+
+/* ============================================ */
+/* BOTONES DE ACCIÓN - REDISEÑADOS             */
+/* ============================================ */
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+  position: relative;
+  margin-top: auto; /* ← Empuja los botones al fondo */
+}
+
+.action-buttons button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem; /* ← Reduje padding */
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.75rem; /* ← Texto más pequeño */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.action-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.action-buttons button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.action-buttons button:active {
+  transform: scale(0.95);
+}
+
+.btn-icon,
+.btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-icon {
+  font-size: 0.9rem; /* ← Icono más pequeño */
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.6);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.btn-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.6);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Variante: Botones con iconos únicamente (opcional para móvil) */
+@media (max-width: 480px) {
+
+  
+  .btn-icon {
+    font-size: 1.1rem;
+  }
+  
+  .action-buttons button {
+    padding: 0.6rem;
+  }
+}
+
+/* ============================================ */
+/* RESPONSIVE MEJORADO                         */
+/* ============================================ */
+
+@media (max-width: 1024px) {
+  .pokemon-card-compact {
+    height: 230px; /* Ligeramente más pequeño en tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .pokemon-card-compact {
+    height: 220px;
+    padding: 0.85rem;
+  }
+
+  .card-layout {
+    gap: 0.75rem;
+  }
+
+  .sprite-section {
+    width: 85px;
+    height: 85px;
+  }
+
+  .sprite {
+    width: 75px;
+    height: 75px;
+  }
+
+  .pokemon-name {
+    font-size: 1rem;
+  }
+
+  .type-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pokemon-card-compact {
+    height: 200px;
+    padding: 0.75rem;
+  }
+
+  .sprite-section {
+    width: 250px;
+    height: 250px;
+  }
+
+  .sprite {
+    width: 150px;
+    height: 150px;
+  }
+
+  .pokemon-name {
+    font-size: 0.9rem;
+  }
+
+  .mini-stats {
+    gap: 0.35rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+
+}
+
+.type-icon-img, .mini-stat-icon-img, .btn-add-icon, .btn-info-icon{
+  width: 20px;
+  height: 20px;
+}
+
+/* ========================================================= */
+/* 🔍 MODAL - BACKDROP CLICKEABLE                           */
+/* ========================================================= */
+
+.modal-backdrop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 2;
+  /* ... resto de tus estilos ... */
+}
+
+/* Asegúrate de que el modal-content NO propague el click */
+.modal-content {
+  cursor: default; /* ← Cursor normal dentro del modal */
+}
+
+

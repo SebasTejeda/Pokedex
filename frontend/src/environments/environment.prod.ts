@@ -1,5 +1,5 @@
 // src/environments/environment.prod.ts
 export const environment = {
   production: true,
-  apiUrl: 'https://pokeapp-backend.onrender.com'  // ← URL de Render
+  apiUrl: 'https://pokedex-n5ii.onrender.com'  // ← URL de Render
 };

@@ -327,7 +327,7 @@ export class TeamBoardComponent implements OnInit {
   loadMyTeam() {
     this.teamService.getTeams().subscribe({
       next: (teams) => {
-        const currentTeam = teams.find((t) => t.id === 1);
+        const currentTeam = teams.find((t) => t.id === 2);
 
         if (currentTeam && currentTeam.members.length > 0) {
           // Modificamos cómo hacemos las peticiones

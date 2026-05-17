@@ -310,7 +310,7 @@ export class TeamBoardComponent implements OnInit {
     this.isSaving.set(true);
     const memberData = { pokemon_id: pokemon.id };
 
-    this.teamService.addPokemonToTeam(1, memberData).subscribe({
+    this.teamService.addPokemonToTeam(2, memberData).subscribe({
       next: () => {
         this.showToast(`¡${pokemon.name} añadido a tu equipo!`, 'success');
         this.isSaving.set(false);

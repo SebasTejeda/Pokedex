@@ -56,3 +56,20 @@ def create_team_member(db: Session, member: schemas.TeamMemberCreate, team_id: i
     db.refresh(db_member)
 
     return db_member
+
+# Asegúrate de tener: import models, schemas
+# (y de importar Session de sqlalchemy.orm si no lo tienes)
+
+def create_user(db: Session, user: schemas.UserCreate):
+    # Nota: Para destrabar el proyecto rápido, guardaremos la contraseña tal cual.
+    # En un sistema con login real, aquí usarías una librería como 'passlib' para encriptarla.
+    db_user = models.User(
+        username=user.username,
+        email=user.email,
+        hashed_password=user.password 
+    )
+    
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user

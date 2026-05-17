@@ -37,3 +37,8 @@ class Team(BaseModel):
     members: List[TeamMember] = [] # ¡Aquí anidamos los miembros!
 
     model_config = {"from_attributes": True}
+    
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str

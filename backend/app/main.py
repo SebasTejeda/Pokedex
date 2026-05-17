@@ -86,3 +86,9 @@ def remove_pokemon_from_team(team_id: int, pokemon_id: int, db: Session = Depend
     db.delete(db_member)
     db.commit()
     return {"message": "Pokémon eliminado con éxito"}
+
+# Asegúrate de tener importado schemas y crud
+
+@app.post("/users/")
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.create_user(db=db, user=user)

@@ -51,11 +51,9 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        console.log('Login exitoso:', response);
         this.router.navigate(['/team']);
       },
       error: (error) => {
-        console.error('Error en login:', error);
         this.isLoading.set(false);
         
         // Manejar diferentes tipos de errores

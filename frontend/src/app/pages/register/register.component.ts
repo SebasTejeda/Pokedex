@@ -1,7 +1,14 @@
 // src/app/pages/register/register.component.ts
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
 
@@ -10,7 +17,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -20,7 +27,7 @@ export class RegisterComponent {
   // ==========================================
   // 📊 SIGNALS
   // ==========================================
-  
+
   isLoading = signal(false);
   errorMessage = signal<string>('');
   showPassword = signal(false);
@@ -30,23 +37,28 @@ export class RegisterComponent {
   // 📝 FORMULARIO
   // ==========================================
 
-  registerForm: FormGroup = this.fb.group({
-    username: ['', [
-      Validators.required, 
-      Validators.minLength(3),
-      Validators.maxLength(50),
-      Validators.pattern(/^[a-zA-Z0-9_]+$/)
-    ]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [
-      Validators.required, 
-      Validators.minLength(6),
-      this.passwordStrengthValidator
-    ]],
-    confirmPassword: ['', [Validators.required]]
-  }, {
-    validators: this.passwordMatchValidator
-  });
+  registerForm: FormGroup = this.fb.group(
+    {
+      username: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(50),
+          Validators.pattern(/^[a-zA-Z0-9_]+$/),
+        ],
+      ],
+      email: ['', [Validators.required, Validators.email]],
+      password: [
+        '',
+        [Validators.required, Validators.minLength(6), this.passwordStrengthValidator],
+      ],
+      confirmPassword: ['', [Validators.required]],
+    },
+    {
+      validators: this.passwordMatchValidator,
+    },
+  );
 
   // ==========================================
   // 🎯 MÉTODOS
@@ -65,13 +77,11 @@ export class RegisterComponent {
 
     this.authService.register({ username, email, password }).subscribe({
       next: (response) => {
-        console.log('Registro exitoso:', response);
         this.router.navigate(['/team']);
       },
       error: (error) => {
-        console.error('Error en registro:', error);
         this.isLoading.set(false);
-        
+
         // Manejar diferentes tipos de errores
         if (error.status === 400) {
           const detail = error.error?.detail || '';
@@ -90,16 +100,16 @@ export class RegisterComponent {
       },
       complete: () => {
         this.isLoading.set(false);
-      }
+      },
     });
   }
 
   togglePasswordVisibility(): void {
-    this.showPassword.update(value => !value);
+    this.showPassword.update((value) => !value);
   }
 
   toggleConfirmPasswordVisibility(): void {
-    this.showConfirmPassword.update(value => !value);
+    this.showConfirmPassword.update((value) => !value);
   }
 
   // ==========================================
@@ -154,14 +164,14 @@ export class RegisterComponent {
     if (field.errors['passwordStrength']) {
       return 'Debe contener letras y números';
     }
-    
+
     return '';
   }
 
   getPasswordMatchError(): string {
     const form = this.registerForm;
     const confirmField = form.get('confirmPassword');
-    
+
     if (form.errors && form.errors['passwordMismatch'] && confirmField?.touched) {
       return 'Las contraseñas no coinciden';
     }
@@ -169,7 +179,7 @@ export class RegisterComponent {
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
     });

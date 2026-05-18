@@ -48,28 +48,19 @@ export class TeamBoardComponent implements OnInit {
   loadedPokemons = signal<Pokemon[]>([]);
   myTeam = computed(() => {
     const currentTeam = this.teamService.currentTeam();
-    console.log('🔄 Computed myTeam - Equipo actual:', currentTeam);
-
     if (!currentTeam) {
-      console.log('⚠️ No hay equipo actual');
       return [];
     }
 
     const loadedPokemons = this.loadedPokemons();
-    console.log('📚 Pokémon cargados disponibles:', loadedPokemons.length);
-    console.log('👥 Miembros del equipo actual:', currentTeam.members);
 
     const filtered = loadedPokemons.filter((pokemon) =>
       currentTeam.members.some((member) => {
         const match = member.pokemon_id === pokemon.id;
-        if (match) {
-          console.log(`✅ Match: Pokemon ${pokemon.name} (${pokemon.id}) está en el equipo`);
-        }
         return match;
       }),
     );
 
-    console.log('🎯 Pokémon filtrados para mostrar:', filtered);
     return filtered;
   });
 
@@ -302,24 +293,24 @@ export class TeamBoardComponent implements OnInit {
     this.applyFilters();
   }
 
-applyFilters(): void {
+  applyFilters(): void {
     // 1. Empezamos con la lista completa de la Pokédex Nacional
     let filtered = [...this.allPokemonNames()];
     const idMap = this.pokemonIdMap();
-    
+
     // 2. Filtramos por búsqueda de texto
     const search = this.searchTerm().toLowerCase().trim();
     if (search) {
-      filtered = filtered.filter(name => name.includes(search));
+      filtered = filtered.filter((name) => name.includes(search));
     }
-    
+
     // 3. Filtramos por generación (IDs)
     if (this.selectedGeneration() !== 0) {
-      const gen = this.generations.find(g => g.value === this.selectedGeneration());
+      const gen = this.generations.find((g) => g.value === this.selectedGeneration());
       if (gen) {
-        filtered = filtered.filter(name => {
+        filtered = filtered.filter((name) => {
           const id = idMap.get(name);
-          return id ? (id >= gen.range[0] && id <= gen.range[1]) : false;
+          return id ? id >= gen.range[0] && id <= gen.range[1] : false;
         });
       }
     }
@@ -327,22 +318,22 @@ applyFilters(): void {
     // 4. Filtramos por Tipo (La solución definitiva)
     if (this.selectedType() !== 'all') {
       this.isLoading.set(true); // Mostramos el loader mientras consultamos a la PokeAPI
-      
+
       // Pedimos a la API la lista de TODOS los Pokémon que tienen este tipo
       fetch(`https://pokeapi.co/api/v2/type/${this.selectedType()}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           // Extraemos solo los nombres de los Pokémon de la respuesta
           const typePokemonNames = data.pokemon.map((p: any) => p.pokemon.name);
-          
-          // Intersectamos: Solo nos quedamos con los que ya pasaron el filtro de texto/gen 
+
+          // Intersectamos: Solo nos quedamos con los que ya pasaron el filtro de texto/gen
           // Y que también están en la lista oficial de ese tipo
-          filtered = filtered.filter(name => typePokemonNames.includes(name));
-          
+          filtered = filtered.filter((name) => typePokemonNames.includes(name));
+
           this.finishApplyingFilters(filtered);
         })
-        .catch(err => {
-          console.error("Error cargando el filtro de tipo", err);
+        .catch((err) => {
+          this.showToast('Ocurrió un problema al filtrar por tipo', 'error');
           this.finishApplyingFilters(filtered); // Continuamos aunque falle la API
         });
     } else {
@@ -356,9 +347,9 @@ applyFilters(): void {
     this.filteredNames.set(finalList);
     this.currentPage.set(1);
     this.calculatePages();
-    
+
     // Usamos tu método original, que tomará exactamente los 20 correctos
-    this.loadCurrentPage(); 
+    this.loadCurrentPage();
   }
 
   totalPower = computed(() => {
@@ -475,8 +466,6 @@ applyFilters(): void {
   });
 
   ngOnInit(): void {
-    console.log('🚀 Iniciando componente TeamBoard');
-
     // Cargar equipos del usuario
     this.loadTeams();
 
@@ -492,49 +481,40 @@ applyFilters(): void {
   }
 
   // ⭐ AGREGAR ESTE MÉTODO
-private loadAllPokemon(): void {
-  console.log('📡 Cargando catálogo de Pokémon...');
-  
-  this.pokeApiService.getPokemonList(10000, 0).subscribe({
-    next: (response) => {
-      console.log('✅ Respuesta recibida:', response.count, 'Pokémon');
-      
-      const idMap = new Map<string, number>();
-      
-      const standardPokemon = response.results.filter((p: any) => {
-        const urlParts = p.url.split('/');
-        const id = parseInt(urlParts[urlParts.length - 2]);
-        
-        if (id < 10000) {
-          idMap.set(p.name, id);
-          return true;
-        }
-        return false;
-      });
-      
-      console.log('📊 Pokémon estándar filtrados:', standardPokemon.length);
-      
-      this.pokemonIdMap.set(idMap);
-      const names = standardPokemon.map((p: any) => p.name);
-      
-      this.allPokemonNames.set(names);
-      this.filteredNames.set(names);
-      
-      this.calculatePages();
-      
-      // ⭐ IMPORTANTE: Esto debe estar aquí
-      this.loadCurrentPage();
-      
-      console.log('✅ Catálogo cargado:', names.length, 'Pokémon');
-    },
-    error: (error) => {
-      console.error('❌ Error cargando catálogo:', error);
-      this.showToast('Error al cargar el catálogo de Pokémon', 'error');
-    }
-  });
-}
+  private loadAllPokemon(): void {
+    this.pokeApiService.getPokemonList(10000, 0).subscribe({
+      next: (response) => {
+        const idMap = new Map<string, number>();
 
-onSearch() {
+        const standardPokemon = response.results.filter((p: any) => {
+          const urlParts = p.url.split('/');
+          const id = parseInt(urlParts[urlParts.length - 2]);
+
+          if (id < 10000) {
+            idMap.set(p.name, id);
+            return true;
+          }
+          return false;
+        });
+
+        this.pokemonIdMap.set(idMap);
+        const names = standardPokemon.map((p: any) => p.name);
+
+        this.allPokemonNames.set(names);
+        this.filteredNames.set(names);
+
+        this.calculatePages();
+
+        // ⭐ IMPORTANTE: Esto debe estar aquí
+        this.loadCurrentPage();
+      },
+      error: (error) => {
+        this.showToast('Error al cargar el catálogo de Pokémon', 'error');
+      },
+    });
+  }
+
+  onSearch() {
     // applyFilters() ya lee this.searchTerm() y hace todo el trabajo
     this.applyFilters();
   }
@@ -554,38 +534,34 @@ onSearch() {
     }
   }
 
-loadCurrentPage(): void {
-  // 1. Encendemos el loader apenas empieza a buscar
-  this.isLoading.set(true); 
+  loadCurrentPage(): void {
+    // 1. Encendemos el loader apenas empieza a buscar
+    this.isLoading.set(true);
 
-  const page = this.currentPage();
-  const names = this.filteredNames();
-  const start = (page - 1) * this.pageSize;
-  const end = start + this.pageSize;
-  const pageNames = names.slice(start, end);
+    const page = this.currentPage();
+    const names = this.filteredNames();
+    const start = (page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const pageNames = names.slice(start, end);
 
-  const requests = pageNames.map(name =>
-    this.pokeApiService.getPokemon(name).pipe(
-      catchError(() => of(null))
-    )
-  );
+    const requests = pageNames.map((name) =>
+      this.pokeApiService.getPokemon(name).pipe(catchError(() => of(null))),
+    );
 
-  forkJoin(requests).subscribe({
-    next: (pokemons) => {
-      const validPokemons = pokemons.filter(p => p !== null) as Pokemon[];
-      this.paginatedPokemon.set(validPokemons);
-      
-      // 2. ¡Apagamos el loader cuando los datos llegan con éxito!
-      this.isLoading.set(false); 
-    },
-    error: (error) => {
-      console.error('❌ Error cargando página:', error);
-      
-      // 3. ¡También apagamos el loader si hay un error para no dejar la pantalla bloqueada!
-      this.isLoading.set(false); 
-    }
-  });
-}
+    forkJoin(requests).subscribe({
+      next: (pokemons) => {
+        const validPokemons = pokemons.filter((p) => p !== null) as Pokemon[];
+        this.paginatedPokemon.set(validPokemons);
+
+        // 2. ¡Apagamos el loader cuando los datos llegan con éxito!
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        // 3. ¡También apagamos el loader si hay un error para no dejar la pantalla bloqueada!
+        this.isLoading.set(false);
+      },
+    });
+  }
 
   // Solo nos quedamos con el Signal para saber qué Pokémon mostra
   openDetails(pokemon: Pokemon) {
@@ -597,17 +573,6 @@ loadCurrentPage(): void {
     document.body.style.top = `-${this.scrollPosition}px`;
     document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
-  }
-
-  showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
-    this.toastMessage.set(message);
-    this.toastType.set(type);
-    this.toastVisible.set(true);
-
-    // Ocultamos el toast después de 3 segundos
-    setTimeout(() => {
-      this.toastVisible.set(false);
-    }, 3000);
   }
 
   closeDetails() {
@@ -646,8 +611,6 @@ loadCurrentPage(): void {
   private loadTeams(): void {
     this.teamService.getTeams().subscribe({
       next: (teams) => {
-        console.log('✅ Equipos cargados:', teams);
-
         // Cargar solo los Pokémon del equipo actual
         const currentTeam = this.teamService.currentTeam();
         if (currentTeam && currentTeam.members.length > 0) {
@@ -655,20 +618,15 @@ loadCurrentPage(): void {
         }
       },
       error: (error) => {
-        console.error('❌ Error cargando equipos:', error);
         this.showToast('Error al cargar los equipos', 'error');
       },
     });
   }
   // ⭐ AGREGAR ESTE MÉTODO PARA CARGAR POKÉMON DEL EQUIPO
   private loadTeamPokemons(members: any[]): void {
-    console.log('🔄 Cargando Pokémon para miembros:', members);
-
     const pokemonRequests = members.map((member) => {
-      console.log(`📡 Solicitando Pokémon ID: ${member.pokemon_id}`);
       return this.pokeApiService.getPokemonById(member.pokemon_id).pipe(
         catchError((error) => {
-          console.error(`❌ Error cargando Pokémon ${member.pokemon_id}:`, error);
           return of(null);
         }),
       );
@@ -676,28 +634,20 @@ loadCurrentPage(): void {
 
     forkJoin(pokemonRequests).subscribe({
       next: (pokemons) => {
-        console.log('📦 Pokémon recibidos:', pokemons);
         const validPokemons = pokemons.filter((p) => p !== null) as Pokemon[];
-        console.log('✅ Pokémon válidos:', validPokemons.length);
 
         // Actualizar el signal de Pokémon cargados
         this.loadedPokemons.update((loaded) => {
-          console.log('📚 Pokémon ya cargados:', loaded.length);
           // Agregar solo los que no están ya cargados
           const newPokemons = validPokemons.filter(
             (newPoke) => !loaded.some((loadedPoke) => loadedPoke.id === newPoke.id),
           );
-          console.log('🆕 Pokémon nuevos a agregar:', newPokemons.length);
           const result = [...loaded, ...newPokemons];
-          console.log('📊 Total Pokémon después de actualizar:', result.length);
           return result;
         });
-
-        console.log('🎯 loadedPokemons actual:', this.loadedPokemons());
-        console.log('🎯 myTeam actual:', this.myTeam());
       },
       error: (error) => {
-        console.error('❌ Error en forkJoin:', error);
+        this.showToast('Error al sincronizar tu equipo', 'error');
       },
     });
   }
@@ -719,7 +669,6 @@ loadCurrentPage(): void {
         this.loadTeams();
       },
       error: (err) => {
-        console.error(err);
         this.showToast('Error al crear el equipo.', 'error');
         this.isSaving.set(false);
       },
@@ -764,7 +713,6 @@ loadCurrentPage(): void {
           this.showToast(`${pokemon.name} añadido al equipo`, 'success');
         },
         error: (error) => {
-          console.error('Error añadiendo Pokémon:', error);
           this.showToast('Error al añadir Pokémon', 'error');
         },
       });
@@ -785,7 +733,6 @@ loadCurrentPage(): void {
         // El computed signal se actualizará automáticamente
       },
       error: (error) => {
-        console.error('Error eliminando Pokémon:', error);
         this.showToast('Error al eliminar Pokémon', 'error');
       },
     });
@@ -820,7 +767,6 @@ loadCurrentPage(): void {
           this.closeCreateTeamModal();
         },
         error: (error) => {
-          console.error('Error creando equipo:', error);
           this.showToast('Error al crear el equipo', 'error');
         },
       });
@@ -854,10 +800,24 @@ loadCurrentPage(): void {
           this.showToast(`Equipo "${team.name}" eliminado`, 'success');
         },
         error: (error) => {
-          console.error('Error eliminando equipo:', error);
           this.showToast('Error al eliminar el equipo', 'error');
         },
       });
     }
+  }
+
+  // ========================================================
+  // 🔔 MÉTODO PARA MOSTRAR TOASTS
+  // ========================================================
+
+  showToast(message: string, type: 'success' | 'error' | 'warning' = 'success'): void {
+    this.toastMessage.set(message);
+    this.toastType.set(type);
+    this.toastVisible.set(true);
+
+    // Auto-ocultar después de 3 segundos
+    setTimeout(() => {
+      this.toastVisible.set(false);
+    }, 3000);
   }
 }

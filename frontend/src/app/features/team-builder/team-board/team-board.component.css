@@ -323,6 +323,13 @@
   font-weight: 700;
 }
 
+.team-count-badge{
+  display: flex;
+  font-size: 2rem;
+  align-items: center;
+  font-weight: 900;
+}
+
 .team-complete-badge {
   display: flex;
   align-items: center;
@@ -987,17 +994,6 @@
 /* 🔍 MODAL DE DETALLES                                     */
 /* ========================================================= */
 
-.pokemon-modal {
-  border: none;
-  background: transparent;
-  padding: 0;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow: visible;
-  box-shadow: none;
-}
-
 .pokemon-modal::backdrop {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
@@ -1437,20 +1433,38 @@
 /* 🔍 MODAL DE DETALLES - VERSIÓN COMPACTA                  */
 /* ========================================================= */
 
+/* ========================================================= */
+/* 🔍 MODAL DE DETALLES - VERSIÓN COMPACTA                  */
+/* ========================================================= */
+
 .pokemon-modal {
   border: none;
   background: transparent;
   padding: 0;
-  max-width: 650px; /* ← Más ancho pero menos alto */
+  max-width: 650px; 
   width: 92%;
-  max-height: none; /* ← Quitamos restricción de altura */
+  max-height: none; 
   overflow: visible;
   box-shadow: none;
+
+  /* 👇 LA MAGIA PARA CENTRARLO ESTÁ AQUÍ 👇 */
+  margin: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
-.pokemon-modal::backdrop {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
+/* 👇 Agrega esto para que el clic afuera cierre el modal correctamente 👇 */
+.modal-backdrop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Lo pone detrás del contenido del modal pero sobre el fondo borroso */
+  cursor: pointer;
 }
 
 .modal-content {
@@ -2294,12 +2308,18 @@
 
 /* Iconos del header de catálogo/equipo/stats */
 .catalog-icon-img,
-.team-icon-img,
 .stats-icon-img {
   width: 32px;
   height: 32px;
   margin-right: 0.75rem;
   object-fit: contain;
+}
+
+
+.team-icon-img{
+  width: 70px;
+  height: 70px;
+  margin-right: 0.75rem;
 }
 
 /* Icono de error */
@@ -2319,8 +2339,8 @@
 
 /* Badge de equipo completo */
 .badge-icon-img {
-  width: 22px;
-  height: 22px;
+  width: 70px;
+  height: 70px;
   margin-right: 0.5rem;
 }
 
@@ -3330,4 +3350,12 @@
     min-width: auto;
     max-width: none;
   }
+}
+
+.team-header{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
 }

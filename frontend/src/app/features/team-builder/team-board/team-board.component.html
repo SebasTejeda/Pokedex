@@ -70,137 +70,192 @@
   @if (activeTab() === 'catalog') {
     <main class="catalog-view">
       <!-- Buscador -->
-<!-- ========================================================= -->
-<!-- 🔍 BARRA DE FILTROS Y BÚSQUEDA                           -->
-<!-- ========================================================= -->
+      <!-- ========================================================= -->
+      <!-- 🔍 BARRA DE FILTROS Y BÚSQUEDA                           -->
+      <!-- ========================================================= -->
 
-<div class="filters-container">
-  
-  <!-- Buscador -->
-  <div class="search-box">
-    <svg class="search-icon-img" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-    </svg>
-    <input
-      type="text"
-      placeholder="Buscar Pokémon (ej. pika, char, bulba...)"
-      class="search-input"
-      [value]="searchTerm()"
-      (input)="searchTerm.set($any($event.target).value); onSearch()">
-    @if (searchTerm()) {
-      <button class="clear-search-btn" (click)="searchTerm.set(''); onSearch()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    }
-  </div>
+      <div class="filters-container">
+        <!-- Buscador -->
+        <div class="search-box">
+          <svg class="search-icon-img" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder="Buscar Pokémon (ej. pika, char, bulba...)"
+            class="search-input"
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value); onSearch()"
+          />
+          @if (searchTerm()) {
+            <button class="clear-search-btn" (click)="searchTerm.set(''); onSearch()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          }
+        </div>
 
-  <!-- Filtros -->
-  <div class="filters-row">
-    
-    <!-- Filtro por Tipo -->
-    <div class="filter-dropdown">
-      <button class="filter-btn" 
+        <!-- Filtros -->
+        <div class="filters-row">
+          <!-- Filtro por Tipo -->
+          <div class="filter-dropdown">
+            <button
+              class="filter-btn"
               [class.active]="selectedType() !== 'all'"
-              (click)="toggleTypeFilter()">
-        <img [src]="pokemonTypes.find(t => t.value === selectedType())?.icon" 
-             alt="Type" 
-             class="filter-icon">
-        <span>{{ pokemonTypes.find(t => t.value === selectedType())?.label }}</span>
-        <svg class="chevron-small" 
-             [class.rotate]="showTypeFilter()"
-             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
+              (click)="toggleTypeFilter()"
+            >
+              <img
+                [src]="pokemonTypes.find((t) => t.value === selectedType())?.icon"
+                alt="Type"
+                class="filter-icon"
+              />
+              <span>{{ pokemonTypes.find((t) => t.value === selectedType())?.label }}</span>
+              <svg
+                class="chevron-small"
+                [class.rotate]="showTypeFilter()"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
 
-      @if (showTypeFilter()) {
-        <div class="filter-dropdown-menu">
-          @for (type of pokemonTypes; track type.value) {
-            <button class="filter-dropdown-item"
+            @if (showTypeFilter()) {
+              <div class="filter-dropdown-menu">
+                @for (type of pokemonTypes; track type.value) {
+                  <button
+                    class="filter-dropdown-item"
                     [class.selected]="selectedType() === type.value"
-                    (click)="selectType(type.value)">
-              <img [src]="type.icon" alt="{{ type.label }}" class="type-icon-small">
-              <span>{{ type.label }}</span>
-              @if (selectedType() === type.value) {
-                <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-              }
-            </button>
-          }
-        </div>
-      }
-    </div>
+                    (click)="selectType(type.value)"
+                  >
+                    <img [src]="type.icon" alt="{{ type.label }}" class="type-icon-small" />
+                    <span>{{ type.label }}</span>
+                    @if (selectedType() === type.value) {
+                      <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
 
-    <!-- Filtro por Generación -->
-    <div class="filter-dropdown">
-      <button class="filter-btn" 
+          <!-- Filtro por Generación -->
+          <div class="filter-dropdown">
+            <button
+              class="filter-btn"
               [class.active]="selectedGeneration() !== 0"
-              (click)="toggleGenFilter()">
-        <svg class="filter-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-        </svg>
-        <span>{{ generations.find(g => g.value === selectedGeneration())?.label }}</span>
-        <svg class="chevron-small" 
-             [class.rotate]="showGenFilter()"
-             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
+              (click)="toggleGenFilter()"
+            >
+              <svg class="filter-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
+              </svg>
+              <span>{{ generations.find((g) => g.value === selectedGeneration())?.label }}</span>
+              <svg
+                class="chevron-small"
+                [class.rotate]="showGenFilter()"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
 
-      @if (showGenFilter()) {
-        <div class="filter-dropdown-menu">
-          @for (gen of generations; track gen.value) {
-            <button class="filter-dropdown-item"
+            @if (showGenFilter()) {
+              <div class="filter-dropdown-menu">
+                @for (gen of generations; track gen.value) {
+                  <button
+                    class="filter-dropdown-item"
                     [class.selected]="selectedGeneration() === gen.value"
-                    (click)="selectGeneration(gen.value)">
-              <span class="gen-badge">Gen {{ gen.value || 'All' }}</span>
-              <span class="gen-label">{{ gen.label }}</span>
-              @if (selectedGeneration() === gen.value) {
-                <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-              }
+                    (click)="selectGeneration(gen.value)"
+                  >
+                    <span class="gen-badge">Gen {{ gen.value || 'All' }}</span>
+                    <span class="gen-label">{{ gen.label }}</span>
+                    @if (selectedGeneration() === gen.value) {
+                      <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Botón limpiar filtros -->
+          @if (selectedType() !== 'all' || selectedGeneration() !== 0 || searchTerm()) {
+            <button class="clear-filters-btn" (click)="clearFilters()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              <span>Limpiar filtros</span>
             </button>
           }
         </div>
+      </div>
+
+      <!-- Overlay para cerrar filtros -->
+      @if (showTypeFilter() || showGenFilter()) {
+        <div
+          class="filters-overlay"
+          (click)="showTypeFilter.set(false); showGenFilter.set(false)"
+        ></div>
       }
-    </div>
-
-    <!-- Botón limpiar filtros -->
-    @if (selectedType() !== 'all' || selectedGeneration() !== 0 || searchTerm()) {
-      <button class="clear-filters-btn" (click)="clearFilters()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-        <span>Limpiar filtros</span>
-      </button>
-    }
-
-  </div>
-</div>
-
-<!-- Overlay para cerrar filtros -->
-@if (showTypeFilter() || showGenFilter()) {
-  <div class="filters-overlay" (click)="showTypeFilter.set(false); showGenFilter.set(false)"></div>
-}
 
       <!-- Catálogo -->
       <div class="catalog-section">
         <div class="catalog-header">
           <h2>
             <img
-              src="https://cdn-icons-png.flaticon.com/512/2821/2821921.png"
+              src="https://icon-icons.com/download-file?file=https%3A%2F%2Fimages.icon-icons.com%2F851%2FPNG%2F512%2FPokedex_tool_icon-icons.com_67529.png&id=67529&pack_or_individual=pack"
               alt="Catálogo"
               class="catalog-icon-img"
             />
-            Pokédex Nacional
+            Pokédex
           </h2>
           <div class="catalog-info">
             <span class="results-count">{{ filteredNames().length }} resultados</span>
@@ -284,11 +339,16 @@
     <main class="team-view">
       <section class="team-panel-full">
         <div class="section-header">
-          <img
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rare-candy.png"
-            alt="Team"
-            class="team-icon-img"
-          />
+          <div class="team-header">
+            <span class="team-count-badge">
+              <img
+                src="https://png.pngtree.com/png-vector/20250716/ourmid/pngtree-pokemon-icon-in-a-circle-vector-png-image_7073855.png"
+                alt="Team"
+                class="team-icon-img"
+              />
+              Equipo Pokemon
+            </span>
+          </div>
 
           <!-- ⭐ SELECTOR DE EQUIPOS -->
           <div class="team-selector-container">
@@ -330,7 +390,14 @@
                   >
                     <div class="team-dropdown-info">
                       <span class="team-dropdown-name">{{ team.name }}</span>
-                      <span class="team-dropdown-count">{{ team.members.length }}/6 Pokémon</span>
+                      <span class="team-dropdown-count"
+                        >{{ team.members.length }}/6
+                        @if (myTeam().length === 1) {
+                          Pokémon
+                        } @else {
+                          Pokemones
+                        }
+                      </span>
                     </div>
                     @if (teamService.teams().length > 1) {
                       <button
@@ -365,6 +432,11 @@
               class="badge-icon-img"
             />
             {{ myTeam().length }}/6
+            @if (myTeam().length === 1) {
+              Pokémon
+            } @else {
+              Pokemones
+            }
           </span>
         </div>
 

@@ -401,29 +401,125 @@
   }
 }
 
+/* ========================================================= */
+/* 🔐 PASSWORD INPUT                                        */
+/* ========================================================= */
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  padding-right: 3.5rem; /* Espacio para el botón */
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  color: #f8fafc; /* ⭐ COLOR DEL TEXTO SIEMPRE BLANCO */
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.password-input::placeholder {
+  color: #64748b;
+}
+
+.password-input:focus {
+  border-color: #3b82f6;
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.password-input.input-error {
+  border-color: #ef4444;
+}
+
+.password-input.input-error:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
 .toggle-password-btn {
   position: absolute;
-  right: 0.75rem;
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #94a3b8; /* ⭐ Asegúrate que este color sea visible */
+  color: #94a3b8;
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 0.3s ease;
-  z-index: 10; /* ⭐ AGREGAR ESTO */
+  z-index: 10; /* ⭐ IMPORTANTE: Por encima del input */
 }
 
 .toggle-password-btn:hover {
-  color: #3b82f6; /* Login */
-  /* o color: #8b5cf6; para Register */
+  color: #3b82f6;
 }
 
 .toggle-password-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+}
+
+/* ========================================================= */
+/* 📝 FORMULARIO                                            */
+/* ========================================================= */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%; /* ⭐ AGREGAR ESTO */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%; /* ⭐ AGREGAR ESTO */
+}
+
+.form-input {
+  width: 100%; /* ⭐ ASEGURAR QUE ESTÉ */
+  padding: 0.875rem 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box; /* ⭐ IMPORTANTE */
+}
+
+/* ========================================================= */
+/* 🔐 PASSWORD INPUT                                        */
+/* ========================================================= */
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%; /* ⭐ AGREGAR ESTO */
+}
+
+.password-input {
+  width: 100%; /* ⭐ ASEGURAR QUE ESTÉ */
+  padding: 0.875rem 1rem;
+  padding-right: 3.5rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box; /* ⭐ IMPORTANTE */
 }

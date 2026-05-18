@@ -282,7 +282,7 @@
           </div>
         }
 
-        @if (paginatedPokemon().length > 0) {
+        @if (!isLoading() && paginatedPokemon().length > 0) {
           <div class="pokemon-grid">
             @for (poke of paginatedPokemon(); track poke.id) {
               <app-pokemon-card

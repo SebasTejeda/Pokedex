@@ -1,15 +1,21 @@
 # app/seed_db.py
 from app.database import SessionLocal
 from app import models
+from app.auth import get_password_hash
 
-def seed_initial_user():
-    """Crea un usuario de prueba"""
+def seed_demo_user():
+    """Crea un usuario de prueba para testing"""
     db = SessionLocal()
     
     # Verificar si ya existe
-    existing_user = db.query(models.User).filter(models.User.email == "demo@pokeapp.com").first()
+    existing_user = db.query(models.User).filter(
+        models.User.email == "demo@pokeapp.com"
+    ).first()
+    
     if existing_user:
-        print("⚠️ El usuario de prueba ya existe")
+        print("⚠️  El usuario demo ya existe")
+        print(f"📧 Email: demo@pokeapp.com")
+        print(f"🔑 Password: demo123")
         db.close()
         return
     
@@ -17,29 +23,30 @@ def seed_initial_user():
     demo_user = models.User(
         username="demo",
         email="demo@pokeapp.com",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIoC1LjXRy"  # "password123"
+        hashed_password=get_password_hash("demo123")
     )
     
     db.add(demo_user)
     db.commit()
     db.refresh(demo_user)
     
-    # Crear un equipo por defecto
+    # Crear equipo por defecto
     default_team = models.Team(
-        name="Mi Primer Equipo",
-        strategy_notes="¡Equipo de prueba!",
+        name="Equipo de Prueba",
+        strategy_notes="Este es un equipo de demostración",
         user_id=demo_user.id
     )
     
     db.add(default_team)
     db.commit()
     
-    print(f"✅ Usuario creado: {demo_user.username} (ID: {demo_user.id})")
-    print(f"✅ Equipo creado: {default_team.name} (ID: {default_team.id})")
+    print("✅ Usuario de prueba creado exitosamente!")
+    print(f"👤 Username: {demo_user.username}")
     print(f"📧 Email: demo@pokeapp.com")
-    print(f"🔑 Password: password123")
+    print(f"🔑 Password: demo123")
+    print(f"🎮 Equipo creado: {default_team.name}")
     
     db.close()
 
 if __name__ == "__main__":
-    seed_initial_user()
+    seed_demo_user()

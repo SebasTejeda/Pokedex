@@ -1,0 +1,93 @@
+<!-- src/app/shared/components/navbar/navbar.component.html -->
+<nav class="navbar">
+  <div class="navbar-container">
+    
+    <!-- Logo y título -->
+    <div class="navbar-brand">
+      <img 
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" 
+        alt="Pokéball" 
+        class="navbar-logo">
+      <div class="brand-text">
+        <h1 class="brand-title">Poké<span class="brand-accent">Dex</span></h1>
+        <span class="brand-subtitle">COMPETITIVA</span>
+      </div>
+    </div>
+
+    <!-- Navegación (centro) -->
+    <div class="navbar-nav">
+      <a routerLink="/team" 
+         routerLinkActive="nav-link-active"
+         class="nav-link">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span>Mi Equipo</span>
+      </a>
+    </div>
+
+    <!-- Usuario (derecha) -->
+    <div class="navbar-user">
+      @if (authService.isAuthenticated()) {
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+          <button 
+            class="user-button"
+            (click)="toggleUserMenu()"
+            [class.active]="isUserMenuOpen()">
+            <div class="user-avatar">
+              {{ getUserInitials() }}
+            </div>
+            <div class="user-info">
+              <span class="user-name">{{ authService.currentUser()?.username }}</span>
+              <span class="user-email">{{ authService.currentUser()?.email }}</span>
+            </div>
+            <svg class="chevron-icon" 
+                 [class.rotate]="isUserMenuOpen()"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown menu -->
+          @if (isUserMenuOpen()) {
+            <div class="user-dropdown">
+              <div class="dropdown-header">
+                <div class="dropdown-user-avatar">
+                  {{ getUserInitials() }}
+                </div>
+                <div class="dropdown-user-info">
+                  <p class="dropdown-user-name">{{ authService.currentUser()?.username }}</p>
+                  <p class="dropdown-user-email">{{ authService.currentUser()?.email }}</p>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              <button class="dropdown-item" (click)="logout()">
+                <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                <span>Cerrar Sesión</span>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Botones de login/register cuando no está autenticado -->
+        <div class="auth-buttons">
+          <a routerLink="/login" class="btn-login">Iniciar Sesión</a>
+          <a routerLink="/register" class="btn-register">Registrarse</a>
+        </div>
+      }
+    </div>
+
+  </div>
+</nav>
+
+<!-- Overlay para cerrar el menú al hacer click fuera -->
+@if (isUserMenuOpen()) {
+  <div class="overlay" (click)="closeUserMenu()"></div>
+}

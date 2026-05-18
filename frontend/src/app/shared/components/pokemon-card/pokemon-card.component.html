@@ -2,18 +2,19 @@
   <div class="pokemon-card" [class.shiny]="isShiny()">
     <!-- Efecto holográfico de fondo -->
     <div class="holographic-overlay"></div>
-    
+
     <!-- Badge de ID -->
-    <div class="pokemon-id-badge">
-      #{{ pokemon().id.toString().padStart(3, '0') }}
-    </div>
+    <div class="pokemon-id-badge">#{{ pokemon().id.toString().padStart(3, '0') }}</div>
 
     <!-- Contenedor de la imagen con animación -->
     <div class="sprite-container">
       <div class="sprite-glow"></div>
-      <img 
-        [src]="pokemon().sprites.other?.['official-artwork']?.front_default || pokemon().sprites.front_default" 
-        [alt]="pokemon().name" 
+      <img
+        [src]="
+          pokemon().sprites.other['official-artwork'].front_default ||
+          pokemon().sprites.front_default
+        "
+        [alt]="pokemon().name"
         class="sprite"
         loading="lazy"
       />
@@ -27,7 +28,11 @@
       <div class="types">
         @for (typeInfo of pokemon().types; track typeInfo.type.name) {
           <span class="type-badge" [attr.data-type]="typeInfo.type.name">
-            <img src="{{ getTypeIcon(typeInfo.type.name) }}" alt="{{ typeInfo.type.name }} icon" class="type-icon-img" />
+            <img
+              src="{{ getTypeIcon(typeInfo.type.name) }}"
+              alt="{{ typeInfo.type.name }} icon"
+              class="type-icon-img"
+            />
             {{ typeInfo.type.name }}
           </span>
         }
@@ -36,15 +41,27 @@
       <!-- Mini stats preview -->
       <div class="mini-stats">
         <div class="mini-stat">
-          <img src="https://png.pngtree.com/png-clipart/20250103/original/pngtree-heart-icon-png-image_4421855.png" alt="HP" class="mini-stat-icon-img">
+          <img
+            src="https://png.pngtree.com/png-clipart/20250103/original/pngtree-heart-icon-png-image_4421855.png"
+            alt="HP"
+            class="mini-stat-icon-img"
+          />
           <span class="mini-stat-value">{{ pokemon().stats[0].base_stat }}</span>
         </div>
         <div class="mini-stat">
-          <img src="https://cdn-icons-png.flaticon.com/512/1298/1298514.png" alt="ATK" class="mini-stat-icon-img">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1298/1298514.png"
+            alt="ATK"
+            class="mini-stat-icon-img"
+          />
           <span class="mini-stat-value">{{ pokemon().stats[1].base_stat }}</span>
         </div>
         <div class="mini-stat">
-          <img src="https://cdn-icons-png.flaticon.com/512/306/306771.png" alt="DEF" class="mini-stat-icon-img">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/306/306771.png"
+            alt="DEF"
+            class="mini-stat-icon-img"
+          />
           <span class="mini-stat-value">{{ pokemon().stats[2].base_stat }}</span>
         </div>
       </div>
@@ -53,11 +70,19 @@
     <!-- Botones de acción mejorados -->
     <div class="action-buttons">
       <button (click)="onAddClick()" class="btn-add" title="Añadir al equipo">
-        <img src="https://cdn-icons-png.flaticon.com/512/5735/5735394.png" alt="Añadir" class="btn-add-icon">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5735/5735394.png"
+          alt="Añadir"
+          class="btn-add-icon"
+        />
         <span class="btn-text">Añadir</span>
       </button>
       <button (click)="onInfoClick()" class="btn-info" title="Ver detalles">
-        <img src="https://cdn-icons-png.flaticon.com/512/5683/5683325.png" alt="Detalles" class="btn-info-icon">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5683/5683325.png"
+          alt="Detalles"
+          class="btn-info-icon"
+        />
         <span class="btn-text">Detalles</span>
       </button>
     </div>

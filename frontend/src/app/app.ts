@@ -1,13 +1,18 @@
-import { Component, signal } from '@angular/core';
+// src/app/app.component.ts
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TeamBoardComponent } from './features/team-builder/team-board/team-board.component';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [TeamBoardComponent],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent],
+  template: `
+    <app-navbar />
+    <router-outlet />
+  `,
+  styles: []
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class AppComponent {
+  title = 'pokeapp-frontend';
 }
